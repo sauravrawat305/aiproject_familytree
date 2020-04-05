@@ -9,11 +9,12 @@ from logpy import Relation,facts,run,fact
 parent=Relation()
 father=Relation()
 mother=Relation()
+wife=Relation()
 
 #facts(parent,('Father','Child'),('Mother','Child'),('Vineeta','Amit'),('Vineeta','Krishna'))
-facts(father,('Father','Child'),('Rohit','Gaurav'),('Abhishek','Vikram'),('Grandfather','Father'))
-facts(mother,('Mother','Child'),('Vineeta','Amit'),('Vineeta','Krishna'))
-
+facts(father,('Father','Child'),('Rohit','Gaurav'),('Abhishek','Vikram'),('Grandfather','Father'),('Grandfather','Father\'s brother'))
+facts(mother,('Mother','Child'),('Vineeta','Amit'),('Vineeta','Krishna'),('Granny','Mother'),('Granny','Matenal Uncle'))
+facts(wife,('Mother','Father'),('GrandFather','GrandMother'))
 def parent(x, y):
     return conde([father(x, y)], [mother(x, y)])
 
@@ -27,8 +28,12 @@ def sibling(x, y):
 
 def uncle(x, y):
     temp = var()
-    return conde(sibling(x,y),father(temp, x) ,grandfather(temp, y))
+    return conde((sibling(x,temp),father(temp, y)))
 
+def maternalUncle(x,y):
+    temp=var()
+    return conde((sibling(x,temp),mother(temp,y)))
+    
 #facts(parent,('Father','Child'),('Mother','Child'),('Grandfather','Father'))
 #print("Parent of Child are :",run(2, x, parent(x, 'Child')))  # two x such that x is a parent of Child
 #print("Child of Father is :",run(1,x,parent('Father',x)))# one x such that Father is a parent of x
@@ -43,31 +48,40 @@ print("""
       4.Parent 
       5.Grandfather 
       6.Sibling 
-      7.Uncle""")
+      7.Uncle
+      8.Maternal Uncle
+      9.Wife""")
 n=int(input(" Enter the no of the relation you want to find :"))
 if (n==1):
-    s=input("You want to find the child .Enter the name of parent :\t")
+    s=input("You want to find the child .Enter the name of parent : ")
     print("Child of "+s+" is : ",run(1,x,parent(s,x)))
 if(n==2):
-    s=input("You want to find the Father .Enter the name of Child:\t")
+    s=input("You want to find the Father .Enter the name of Child: ")
     print("Father of "+s+" is : ",run(1,x,father(x,s)))
 if(n==3):
-    s=input("You want to find the Mother .Enter the name of Child:\t")
+    s=input("You want to find the Mother .Enter the name of Child: ")
     print("Mother of "+s+" is : ",run(1,x,mother(x,s)))
 if(n==4):
-    s=input("You want to find the Parent of the Child .Enter the name of Child:\t")
+    s=input("You want to find the Parent of the Child .Enter the name of Child: ")
     print("Parents of "+s+" are : ",run(2,x,parent(x,s)))
     #print(run(2,x,parent(x,'Child')))
 if (n==5):
-    s=input("You want to find the grandparent .Enter the name of grandson to find his grandfather's name :  ")
+    s=input("You want to find the grandparent .Enter the name of grandson to find his grandfather's name : ")
     print("Grandfather of "+s+" is :",run(1, x, grandfather(x,s)))
 if (n==6):
     s=input("You want to find the sibling .Enter the name of one of the sibling :  ")
-    print("Sibling of "+s+" is :",run(0,x,sibling(x,s)))
+    print("Sibling of "+s+" is :",run(1,x,sibling(x,s)))
     #print("",run(0,x,sibling(x,'Krishna')))
 if(n==7):
-    s=input("You want to find the uncle.Enter the name of child whose uncle's name you wanna find :")
+    s=input("You want to find the uncle.Enter the name of child whose uncle's name you wanna find : ")
     print("Uncle of "+s+" is : ",run(1,x,uncle(x,s)))
+if(n==8):
+    s=input("You want to find the maternal uncle.Enter the name of child whose maternal uncle's name you wanna find :")
+    print("Maternal Uncle of "+s+" is : ",run(1,x,maternalUncle(x,s)))
+if(n==9):
+     s=input("You want to find the Wife.Enter the name of husband : ")
+     print("Wife of "+s+" is : ",run(1,x,wife(x,s)))
+    
 else:
     print("\n======================================================")
     print("\n  Enter the valid no of the relation from the above list")
